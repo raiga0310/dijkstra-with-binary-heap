@@ -7,8 +7,6 @@ pub struct Node {
     idx: usize,
     // 始点までの最短経路
     sd: usize,
-    // 最短距離になるノード
-    prev: usize,
 }
 
 impl PartialOrd for Node {
@@ -31,19 +29,10 @@ pub fn dijkstra(graph: Vec<Vec<usize>>, start: usize, goal: usize) -> (Vec<usize
 
     //init
     distance[start] = 0;
-    queue.push(Node {
-        idx: start,
-        sd: 0,
-        prev: start,
-    });
+    queue.push(Node { idx: start, sd: 0 });
 
     //Solve
-    while let Some(Node {
-        idx: u,
-        sd,
-        prev: _,
-    }) = queue.pop()
-    {
+    while let Some(Node { idx: u, sd }) = queue.pop() {
         // 訪問済みならスキップ
         if sd > distance[u] {
             continue;
@@ -74,11 +63,7 @@ pub fn dijkstra(graph: Vec<Vec<usize>>, start: usize, goal: usize) -> (Vec<usize
             if alt < distance[v] {
                 distance[v] = alt;
                 prev_nodes[v] = Some(u);
-                queue.push(Node {
-                    idx: v,
-                    sd: alt,
-                    prev: u,
-                });
+                queue.push(Node { idx: v, sd: alt });
 
                 println!("更新: ノード {} の最短距離を {} に変更", v, alt);
             }
