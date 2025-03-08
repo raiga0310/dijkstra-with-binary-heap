@@ -1,25 +1,5 @@
+use std::cmp::Reverse;
 use std::collections::BinaryHeap;
-
-// Node構造体
-#[derive(Clone, PartialEq, Eq)]
-pub struct Node {
-    // 識別番号
-    idx: usize,
-    // 始点までの最短経路
-    sd: usize,
-}
-
-impl PartialOrd for Node {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(other.sd.cmp(&self.sd)) // 逆順にして最小値を優先
-    }
-}
-
-impl Ord for Node {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        other.sd.cmp(&self.sd) // 逆順にして最小値を優先
-    }
-}
 
 pub fn dijkstra(graph: Vec<Vec<usize>>, start: usize, goal: usize) -> (Vec<usize>, Vec<usize>) {
     let node_num = graph.len();
@@ -29,10 +9,10 @@ pub fn dijkstra(graph: Vec<Vec<usize>>, start: usize, goal: usize) -> (Vec<usize
 
     //init
     distance[start] = 0;
-    queue.push(Node { idx: start, sd: 0 });
+    queue.push(Reverse((start, 0)));
 
     //Solve
-    while let Some(Node { idx: u, sd }) = queue.pop() {
+    while let Some(Reverse((u, sd))) = queue.pop() {
         // 訪問済みならスキップ
         if sd > distance[u] {
             continue;
@@ -63,7 +43,7 @@ pub fn dijkstra(graph: Vec<Vec<usize>>, start: usize, goal: usize) -> (Vec<usize
             if alt < distance[v] {
                 distance[v] = alt;
                 prev_nodes[v] = Some(u);
-                queue.push(Node { idx: v, sd: alt });
+                queue.push(Reverse((v, alt)));
 
                 println!("更新: ノード {} の最短距離を {} に変更", v, alt);
             }
